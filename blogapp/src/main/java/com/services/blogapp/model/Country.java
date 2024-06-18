@@ -25,7 +25,7 @@ public class Country {
 	@SequenceGenerator(name = "gen_country_seq", allocationSize = 1, sequenceName = "gen_country_seq")
 	private int countryId;
 
-	@Column(name = "country_code", nullable = false)
+	@Column(name = "country_code", nullable = false, unique = true)
 	private String countryCode;
 
 	@Column(name = "country_name", nullable = false)
