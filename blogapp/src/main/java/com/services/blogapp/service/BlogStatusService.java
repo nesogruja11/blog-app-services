@@ -20,6 +20,11 @@ public class BlogStatusService {
 				.orElseThrow(() -> new NotFoundException("Nije pronađen blog status sa id-em:" + id));
 	}
 
+	public BlogStatus findByBlogStatusCode(String blogStatusCode) throws NotFoundException {
+		return blogStatusRepository.findByBlogStatusCode(blogStatusCode).orElseThrow(
+				() -> new NotFoundException("Nije pronađen blog status(blogStatusCode:" + blogStatusCode + ")!"));
+	}
+
 	public BlogStatus save(BlogStatusDto blogStatusDto) throws NotFoundException {
 		BlogStatus blogStatus = new BlogStatus();
 		blogStatus.setBlogStatusCode(blogStatusDto.getBlogStatusCode());
