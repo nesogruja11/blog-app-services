@@ -1,7 +1,7 @@
 package com.services.blogapp.config;
 
 import java.util.List;
-
+/*
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,4 +36,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return auth;
 	}
 
-}
+}*/

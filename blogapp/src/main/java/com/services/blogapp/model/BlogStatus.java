@@ -25,7 +25,7 @@ public class BlogStatus {
 	@SequenceGenerator(name = "gen_blog_status_seq", allocationSize = 1, sequenceName = "gen_blog_status_seq")
 	private int blogStatusId;
 
-	@Column(name = "blog_status_code", nullable = false)
+	@Column(name = "blog_status_code", nullable = false, unique = true)
 	private String blogStatusCode;
 
 	@Column(name = "blog_status_name", nullable = false)
