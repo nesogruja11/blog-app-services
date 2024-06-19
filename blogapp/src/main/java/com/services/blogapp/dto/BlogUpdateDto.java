@@ -1,6 +1,7 @@
 package com.services.blogapp.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,5 +20,7 @@ public class BlogUpdateDto {
 	private String blogContent;
 	private int countryId;
 	private String[] pictureURLs;
+	private String[] commentContents;
+	private LocalDateTime createdAt;
 
 }
