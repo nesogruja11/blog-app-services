@@ -1,7 +1,8 @@
 package com.services.blogapp.config;
 
 import java.util.List;
-/*
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,12 +29,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		User user = userRepository.findByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException("Nije pronađen korisnik sa username-om:" + username));
-		List<UserRole> userRoles = userRoleRepository.findByUser(user);
+		Optional<User> user = userRepository.findByUsername(username);
+		user.orElseThrow(() -> new UsernameNotFoundException("Nije pronađen korisnik sa username-om:" + username));
+		List<UserRole> userRoles = userRoleRepository.findByUser(user.get());
 
-		AuthUserDetails auth = new AuthUserDetails(user, userRoles);
+		AuthUserDetails auth = new AuthUserDetails(user.get(), userRoles);
 		return auth;
 	}
 
-}*/
+}

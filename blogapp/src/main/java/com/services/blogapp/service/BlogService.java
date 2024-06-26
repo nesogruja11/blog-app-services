@@ -14,7 +14,9 @@ import com.services.blogapp.exception.NotFoundException;
 import com.services.blogapp.model.Blog;
 import com.services.blogapp.model.BlogStatus;
 import com.services.blogapp.model.Country;
+import com.services.blogapp.model.User;
 import com.services.blogapp.repository.BlogRepository;
+import com.services.blogapp.utils.SecurityUtils;
 
 @Service
 public class BlogService {
@@ -27,6 +29,8 @@ public class BlogService {
 	BlogStatusService blogStatusService;
 	@Autowired
 	PictureService pictureService;
+	@Autowired
+	UserService userService;
 	@Autowired
 	CommentService commentService;
 
@@ -43,6 +47,8 @@ public class BlogService {
 
 	@Transactional
 	public Blog save(BlogDto blogDto) throws NotFoundException {
+		String userName = SecurityUtils.getUsername();
+		User user = userService.findUserByUsername(userName).get();
 		Blog blog = new Blog();
 		blog.setBlogTitle(blogDto.getBlogTitle());
 		blog.setTravelDate(blogDto.getTravelDate());
@@ -53,6 +59,7 @@ public class BlogService {
 		blog.setCountry(country);
 		BlogStatus blogStatus = blogStatusService.findByBlogStatusCode(NEODOBREN);
 		blog.setBlogStatus(blogStatus);
+		blog.setUser(user);
 		blog = blogRepository.save(blog);
 		// save pictures
 		pictureService.savePictures(new PictureDto(blog.getBlogId(), blogDto.getPictureURLs()));
