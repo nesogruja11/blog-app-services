@@ -26,7 +26,7 @@ public class WebSecurityConfiguration {
 
 	private static final String[] ADMIN_URLS = { "/role/**", "/blogStatus/**", "/country/save", "/country/update",
 			"/country/delete", "/user/delete", "/user/update", "/user/findAll", "/blogStatus/save",
-			"/blogStatus/update" };
+			"/blogStatus/update", "/blog/approve" };
 	private static final String[] USER_URLS = { "/blog/save", "/blog/update", "/country/findbyId", "/country/findAll",
 			"/comment/save" };
 	private static final String[] PERMIT_ALL_URLS = { "/user/login", "/user/save", "/blog/findById", "/blog/findAll",

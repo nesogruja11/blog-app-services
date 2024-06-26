@@ -21,5 +21,6 @@ public class BlogDto {
 	private String[] pictureURLs;
 	private String[] commentContents;
 	private LocalDateTime createdAt;
+	private boolean approved;
 
 }
