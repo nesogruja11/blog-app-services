@@ -48,4 +48,9 @@ public class BlogController {
 
 	}
 
+	@PostMapping("/approve")
+	public Blog approveBlog(@RequestParam int blogId) throws NotFoundException {
+		return blogService.approveBlog(blogId);
+	}
+
 }

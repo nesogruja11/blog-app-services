@@ -45,6 +45,9 @@ public class Blog {
 	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
 
+	@Column(name = "approved", nullable = true)
+	private boolean approved;
+
 	// author
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = true)
@@ -57,4 +60,5 @@ public class Blog {
 	@ManyToOne
 	@JoinColumn(name = "blog_status_id", nullable = false)
 	private BlogStatus blogStatus;
+
 }

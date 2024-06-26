@@ -35,6 +35,7 @@ public class BlogService {
 	CommentService commentService;
 
 	final String NEODOBREN = "neodobren";
+	final String ODOBREN = "odobren";
 
 	public Blog findById(int id) throws NotFoundException {
 		return blogRepository.findById(id)
@@ -106,6 +107,14 @@ public class BlogService {
 			return true;
 		else
 			return false;
+	}
+
+	public Blog approveBlog(int blogId) throws NotFoundException {
+		Blog blog = findById(blogId);
+		blog.setApproved(true);
+		BlogStatus blogStatus = blogStatusService.findByBlogStatusCode(ODOBREN);
+		blog.setBlogStatus(blogStatus);
+		return blogRepository.save(blog);
 	}
 
 }
