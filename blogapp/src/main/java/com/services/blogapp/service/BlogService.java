@@ -31,6 +31,8 @@ public class BlogService {
 	PictureService pictureService;
 	@Autowired
 	UserService userService;
+	@Autowired
+	CommentService commentService;
 
 	final String NEODOBREN = "neodobren";
 
@@ -58,9 +60,7 @@ public class BlogService {
 		BlogStatus blogStatus = blogStatusService.findByBlogStatusCode(NEODOBREN);
 		blog.setBlogStatus(blogStatus);
 		blog.setUser(user);
-
 		blog = blogRepository.save(blog);
-
 		// save pictures
 		pictureService.savePictures(new PictureDto(blog.getBlogId(), blogDto.getPictureURLs()));
 
@@ -86,6 +86,8 @@ public class BlogService {
 		pictureService.deleteByBlog(blog);
 		// save pictures
 		pictureService.savePictures(new PictureDto(blog.getBlogId(), blogUpdateDto.getPictureURLs()));
+		// delete old comments
+		commentService.deleteByBlog(blog);
 
 		return blog;
 
@@ -97,6 +99,13 @@ public class BlogService {
 		} else {
 			throw new NotFoundException("Nije pronađen blog sa id-em:" + blog.getBlogId());
 		}
+	}
+
+	public boolean existById(int blogId) {
+		if (blogRepository.existsById(blogId))
+			return true;
+		else
+			return false;
 	}
 
 }
