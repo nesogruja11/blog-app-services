@@ -16,12 +16,15 @@ import com.services.blogapp.dto.BlogUpdateDto;
 import com.services.blogapp.exception.NotFoundException;
 import com.services.blogapp.model.Blog;
 import com.services.blogapp.service.BlogService;
+import com.services.blogapp.service.CommentService;
 
 @RestController
 @RequestMapping("/blog")
 public class BlogController {
 	@Autowired
 	BlogService blogService;
+	@Autowired
+	CommentService commentService;
 
 	@GetMapping("/findById")
 	public Blog findById(@RequestParam int id) throws NotFoundException {

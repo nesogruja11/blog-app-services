@@ -17,8 +17,9 @@ public class BlogDto {
 	private LocalDate travelDate;
 	private String coverImageUrl;
 	private String blogContent;
-	private LocalDateTime createdAt;
 	private int countryId;
 	private String[] pictureURLs;
+	private String[] commentContents;
+	private LocalDateTime createdAt;
 
 }
