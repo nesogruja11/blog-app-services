@@ -33,4 +33,15 @@ public class CommentController {
 		return commentService.findByBlogId(blogId);
 	}
 
+	@GetMapping("/findAll")
+	private List<Comment> findAll() {
+		return commentService.findAll();
+	}
+
+	@GetMapping("/findById")
+	public Comment findById(@RequestParam int id) throws NotFoundException {
+		return commentService.findById(id);
+
+	}
+
 }
