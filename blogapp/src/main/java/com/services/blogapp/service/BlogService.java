@@ -14,8 +14,11 @@ import com.services.blogapp.exception.NotFoundException;
 import com.services.blogapp.model.Blog;
 import com.services.blogapp.model.BlogStatus;
 import com.services.blogapp.model.Country;
+import com.services.blogapp.model.FavouriteBlog;
+import com.services.blogapp.model.FavouriteBlogKey;
 import com.services.blogapp.model.User;
 import com.services.blogapp.repository.BlogRepository;
+import com.services.blogapp.repository.FavouriteBlogRepository;
 import com.services.blogapp.utils.SecurityUtils;
 
 @Service
@@ -33,6 +36,8 @@ public class BlogService {
 	UserService userService;
 	@Autowired
 	CommentService commentService;
+	@Autowired
+	FavouriteBlogRepository favouriteBlogRepository;
 
 	final String NEODOBREN = "neodobren";
 	final String ODOBREN = "odobren";
@@ -115,6 +120,31 @@ public class BlogService {
 		BlogStatus blogStatus = blogStatusService.findByBlogStatusCode(ODOBREN);
 		blog.setBlogStatus(blogStatus);
 		return blogRepository.save(blog);
+	}
+
+	public FavouriteBlog saveFavouriteBlog(int blogId) throws NotFoundException {
+		String userName = SecurityUtils.getUsername();
+		User user = userService.findUserByUsername(userName).get();
+		Blog blog = findById(blogId);
+		FavouriteBlog favouriteBlog = new FavouriteBlog();
+		FavouriteBlogKey key = new FavouriteBlogKey(user.getUserId(), blog.getBlogId());
+		favouriteBlog.setFavouriteBlogKey(key);
+		favouriteBlog.setUser(user);
+		favouriteBlog.setBlog(blog);
+		return favouriteBlogRepository.save(favouriteBlog);
+
+	}
+
+	@Transactional
+	public boolean deleteFavouriteBlog(int blogId) throws NotFoundException {
+		Blog blog = findById(blogId);
+		String userName = SecurityUtils.getUsername();
+		User user = userService.findUserByUsername(userName).get();
+		if (favouriteBlogRepository.deleteByUserAndBlog(user, blog) > 0)
+			return true;
+
+		return false;
+
 	}
 
 }
