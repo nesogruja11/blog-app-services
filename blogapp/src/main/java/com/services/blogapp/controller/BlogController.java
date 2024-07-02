@@ -50,6 +50,11 @@ public class BlogController {
 
 	}
 
+	@DeleteMapping("/deleteById")
+	private void deleteByBlogId(@RequestParam int blogId) throws NotFoundException {
+		blogService.deleteBlog(blogId);
+	}
+
 	@PostMapping("/approve")
 	public Blog approveBlog(@RequestParam int blogId) throws NotFoundException {
 		return blogService.approveBlog(blogId);

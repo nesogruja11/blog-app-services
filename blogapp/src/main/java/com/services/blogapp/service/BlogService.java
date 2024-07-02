@@ -21,6 +21,8 @@ import com.services.blogapp.model.User;
 import com.services.blogapp.repository.BlogRepository;
 import com.services.blogapp.repository.CommentRepository;
 import com.services.blogapp.repository.FavouriteBlogRepository;
+import com.services.blogapp.repository.PictureRepository;
+import com.services.blogapp.repository.UserRepository;
 import com.services.blogapp.utils.SecurityUtils;
 
 @Service
@@ -40,6 +42,10 @@ public class BlogService {
 	CommentRepository commentRepository;
 	@Autowired
 	FavouriteBlogRepository favouriteBlogRepository;
+	@Autowired
+	UserRepository userRepository;
+	@Autowired
+	PictureRepository pictureRepository;
 
 	final String NEODOBREN = "neodobren";
 	final String ODOBREN = "odobren";
@@ -47,6 +53,15 @@ public class BlogService {
 	public Blog findById(int id) throws NotFoundException {
 		return blogRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException("Nije pronađen blog sa id-em:" + id));
+	}
+
+	public void delete(Blog blog) throws NotFoundException {
+		if (blogRepository.existsById(blog.getBlogId())) {
+			blogRepository.delete(blog);
+
+		} else {
+			throw new NotFoundException("Nije pronađen blog sa id-em:" + blog.getBlogId());
+		}
 	}
 
 	public List<Blog> findAll() {
@@ -68,10 +83,10 @@ public class BlogService {
 		BlogStatus blogStatus = blogStatusService.findByBlogStatusCode(NEODOBREN);
 		blog.setBlogStatus(blogStatus);
 		blog.setUser(user);
+		user.setTotalCreatedBlogs(user.getTotalCreatedBlogs() + 1);
 		blog = blogRepository.save(blog);
 		// save pictures
 		pictureService.savePictures(new PictureDto(blog.getBlogId(), blogDto.getPictureURLs()));
-
 		return blog;
 
 	}
@@ -101,11 +116,20 @@ public class BlogService {
 
 	}
 
-	public void delete(Blog blog) throws NotFoundException {
-		if (blogRepository.existsById(blog.getBlogId())) {
-			blogRepository.delete(blog);
+	@Transactional
+	public void deleteBlog(int blogId) throws NotFoundException {
+		if (blogRepository.existsById(blogId)) {
+			Blog blog = findById(blogId);
+			pictureRepository.deleteByBlog(blog);
+
+			User user = blog.getUser();
+			user.setTotalCreatedBlogs(user.getTotalCreatedBlogs() - 1);
+			if (blog.isApproved())
+				user.setBlogApproveCount(user.getBlogApproveCount() - 1);
+			userRepository.save(user);
+			blogRepository.deleteById(blogId);
 		} else {
-			throw new NotFoundException("Nije pronađen blog sa id-em:" + blog.getBlogId());
+			throw new NotFoundException("Nije pronađen blog sa id-em:" + blogId);
 		}
 	}
 
@@ -119,9 +143,15 @@ public class BlogService {
 	public Blog approveBlog(int blogId) throws NotFoundException {
 		Blog blog = findById(blogId);
 		blog.setApproved(true);
+		User user = blog.getUser();
+		user.setBlogApproveCount(user.getBlogApproveCount() + 1);
 		BlogStatus blogStatus = blogStatusService.findByBlogStatusCode(ODOBREN);
 		blog.setBlogStatus(blogStatus);
-		return blogRepository.save(blog);
+		blogRepository.save(blog);
+		user.setBloggerScore(calculateBloggerScore(user));
+		userRepository.save(user);
+
+		return blog;
 	}
 
 	public FavouriteBlog saveFavouriteBlog(int blogId) throws NotFoundException {
@@ -179,6 +209,18 @@ public class BlogService {
 		float blogScore = 100f * (2f * favouriteCount / (favBlogFavCount + commentCount) / favBlogCommentCount) / 3f;
 		return blogScore;
 
+	}
+
+	public float findAverageApprovedBlogScore(int userId) {
+		return blogRepository.findAverageApprovedBlogScore(userId);
+	}
+
+	public float calculateBloggerScore(User user) {
+		int totalCreatedBlogs = user.getTotalCreatedBlogs();
+		int blogApproveCount = user.getBlogApproveCount();
+		float averageApprovedBlogScore = findAverageApprovedBlogScore(user.getUserId());
+		float bloggerScore = 100f * ((blogApproveCount / totalCreatedBlogs) + averageApprovedBlogScore) / 2f;
+		return bloggerScore;
 	}
 
 }
