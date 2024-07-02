@@ -223,4 +223,8 @@ public class BlogService {
 		return bloggerScore;
 	}
 
+	public List<Blog> findTop5ByOrderByBlogScoreDesc() {
+		return blogRepository.findTop5ByOrderByBlogScoreDesc();
+	}
+
 }
