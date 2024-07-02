@@ -2,6 +2,7 @@ package com.services.blogapp.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import com.services.blogapp.model.FavouriteBlog;
 import com.services.blogapp.model.FavouriteBlogKey;
 import com.services.blogapp.model.User;
 import com.services.blogapp.repository.BlogRepository;
+import com.services.blogapp.repository.CommentRepository;
 import com.services.blogapp.repository.FavouriteBlogRepository;
 import com.services.blogapp.utils.SecurityUtils;
 
@@ -35,7 +37,7 @@ public class BlogService {
 	@Autowired
 	UserService userService;
 	@Autowired
-	CommentService commentService;
+	CommentRepository commentRepository;
 	@Autowired
 	FavouriteBlogRepository favouriteBlogRepository;
 
@@ -93,7 +95,7 @@ public class BlogService {
 		// save pictures
 		pictureService.savePictures(new PictureDto(blog.getBlogId(), blogUpdateDto.getPictureURLs()));
 		// delete old comments
-		commentService.deleteByBlog(blog);
+		commentRepository.deleteByBlog(blog);
 
 		return blog;
 
@@ -131,6 +133,9 @@ public class BlogService {
 		favouriteBlog.setFavouriteBlogKey(key);
 		favouriteBlog.setUser(user);
 		favouriteBlog.setBlog(blog);
+		blog.setFavouriteCount(blog.getFavouriteCount() + 1);
+		blog.setBlogScore(calculateBlogScore(blog));
+		blogRepository.save(blog);
 		return favouriteBlogRepository.save(favouriteBlog);
 
 	}
@@ -140,10 +145,39 @@ public class BlogService {
 		Blog blog = findById(blogId);
 		String userName = SecurityUtils.getUsername();
 		User user = userService.findUserByUsername(userName).get();
-		if (favouriteBlogRepository.deleteByUserAndBlog(user, blog) > 0)
+		if (favouriteBlogRepository.deleteByUserAndBlog(user, blog) > 0) {
+			blog.setFavouriteCount(blog.getFavouriteCount() - 1);
+			blogRepository.save(blog);
 			return true;
+		}
 
 		return false;
+
+	}
+
+	public int findTopByOrderByFavouriteCountDesc() {
+		Optional<Blog> blogOpt = blogRepository.findTopByOrderByFavouriteCountDesc();
+		if (blogOpt.isPresent())
+			return blogOpt.get().getFavouriteCount();
+		return 0;
+
+	}
+
+	public int findTopByOrderByCommentCountDesc() {
+		Optional<Blog> blogOpt = blogRepository.findTopByOrderByCommentCountDesc();
+		if (blogOpt.isPresent())
+			return blogOpt.get().getCommentCount();
+		return 0;
+
+	}
+
+	public float calculateBlogScore(Blog blog) {
+		int favouriteCount = blog.getFavouriteCount();
+		int favBlogFavCount = findTopByOrderByFavouriteCountDesc();
+		int commentCount = blog.getCommentCount();
+		int favBlogCommentCount = findTopByOrderByCommentCountDesc();
+		float blogScore = 100f * (2f * favouriteCount / (favBlogFavCount + commentCount) / favBlogCommentCount) / 3f;
+		return blogScore;
 
 	}
 

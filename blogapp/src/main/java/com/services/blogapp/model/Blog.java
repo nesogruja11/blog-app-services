@@ -48,6 +48,15 @@ public class Blog {
 	@Column(name = "approved", nullable = true)
 	private boolean approved;
 
+	@Column(name = "favourite_count", nullable = true)
+	private int favouriteCount = 0;
+
+	@Column(name = "comment_count", nullable = true)
+	private int commentCount = 0;
+
+	@Column(name = "blog_score", nullable = true)
+	private float blogScore;
+
 	// author
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = true)
