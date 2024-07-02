@@ -58,4 +58,9 @@ public class UserController {
 		return userService.findById(id);
 	}
 
+	@GetMapping("/findTop5")
+	public List<User> findTop5() {
+		return userService.findTop5ByOrderByBloggerScoreDesc();
+	}
+
 }

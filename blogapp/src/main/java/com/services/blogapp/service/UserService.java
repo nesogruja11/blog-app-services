@@ -128,4 +128,8 @@ public class UserService {
 
 	}
 
+	public List<User> findTop5ByOrderByBloggerScoreDesc() {
+		return userRepository.findTop5ByOrderByBloggerScoreDesc();
+	}
+
 }
