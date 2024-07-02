@@ -70,4 +70,9 @@ public class BlogController {
 		return blogService.deleteFavouriteBlog(blogId);
 	}
 
+	@GetMapping("/findTop5")
+	public List<Blog> findTop5() {
+		return blogService.findTop5ByOrderByBlogScoreDesc();
+	}
+
 }
