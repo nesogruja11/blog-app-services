@@ -26,6 +26,8 @@ public class CommentService {
 	BlogRepository blogRepository;
 	@Autowired
 	UserService userService;
+	@Autowired
+	BlogService blogService;
 
 	public List<Comment> findAll() {
 		return commentRepository.findAll();
@@ -54,12 +56,17 @@ public class CommentService {
 		comment.setCreatedAt(LocalDateTime.now());
 		comment.setBlog(blog);
 		comment.setUser(user);
+		blog.setCommentCount(blog.getCommentCount() + 1);
+		blog.setBlogScore(blogService.calculateBlogScore(blog));
+
+		blogRepository.save(blog);
 		return commentRepository.save(comment);
 
 	}
 
 	public void deleteByBlog(Blog blog) {
 		commentRepository.deleteByBlog(blog);
+
 	}
 
 	// prebaciti na database projekciju radi performansi izvršenja servisa
@@ -73,6 +80,18 @@ public class CommentService {
 			return blogCommentDtos;
 		}
 		throw new NotFoundException("Nije pronađen blog sa id-em:" + blogId);
+	}
+
+	public void delete(int commentId) throws NotFoundException {
+		if (commentRepository.existsById(commentId)) {
+			Comment comment = findById(commentId);
+			Blog blog = comment.getBlog();
+			blog.setCommentCount(blog.getCommentCount() - 1);
+			blogRepository.save(blog);
+			commentRepository.deleteById(commentId);
+		} else {
+			throw new NotFoundException("Nije pronađen komentar sa id-em:" + commentId);
+		}
 	}
 
 }
