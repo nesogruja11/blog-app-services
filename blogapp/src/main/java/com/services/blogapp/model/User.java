@@ -43,8 +43,11 @@ public class User {
 	@Column(name = "total_created_blogs", nullable = false)
 	private int totalCreatedBlogs = 0;
 
+	@Column(name = "blog_approve_count", nullable = true)
+	private int blogApproveCount = 0;
+
 	@Column(name = "blogger_score", nullable = false)
-	private int bloggerScore = 0;
+	private float bloggerScore = 0;
 
 	@Column(name = "active", nullable = false)
 	private boolean active = true;
