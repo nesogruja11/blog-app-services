@@ -14,6 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.services.blogapp.exception.CustomAccessDeniedHandler;
+import com.services.blogapp.exception.SimpleAuthenticationEntryPoint;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfiguration {
@@ -22,7 +25,10 @@ public class WebSecurityConfiguration {
 	UserDetailsServiceImpl userDetailsService;
 
 	@Autowired
-	private AuthEntryPointJwt unauthorizedHandler;
+	private SimpleAuthenticationEntryPoint unauthorizedHandler;
+
+	@Autowired
+	CustomAccessDeniedHandler customAcessDeniedHandler;
 
 	private static final String[] ADMIN_URLS = { "/role/**", "/blogStatus/**", "/country/save", "/country/update",
 			"/country/delete", "/user/delete", "/user/update", "/user/findAll", "/blogStatus/save",
@@ -63,7 +69,7 @@ public class WebSecurityConfiguration {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
-				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler).accessDeniedHandler(customAcessDeniedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers(PERMIT_ALL_URLS).permitAll()
 				.requestMatchers(ADMIN_URLS).hasRole("ADMIN")
