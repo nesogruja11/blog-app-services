@@ -12,4 +12,6 @@ import com.services.blogapp.model.User;
 public interface FavouriteBlogRepository extends JpaRepository<FavouriteBlog, FavouriteBlogKey> {
 	int deleteByUserAndBlog(User user, Blog blog);
 
+	boolean existsByBlogAndUser(Blog blog, User user);
+
 }

@@ -158,15 +158,35 @@ public class BlogService {
 		String userName = SecurityUtils.getUsername();
 		User user = userService.findUserByUsername(userName).get();
 		Blog blog = findById(blogId);
-		FavouriteBlog favouriteBlog = new FavouriteBlog();
-		FavouriteBlogKey key = new FavouriteBlogKey(user.getUserId(), blog.getBlogId());
-		favouriteBlog.setFavouriteBlogKey(key);
-		favouriteBlog.setUser(user);
-		favouriteBlog.setBlog(blog);
-		blog.setFavouriteCount(blog.getFavouriteCount() + 1);
-		blog.setBlogScore(calculateBlogScore(blog));
-		blogRepository.save(blog);
-		return favouriteBlogRepository.save(favouriteBlog);
+		if (!favouriteBlogRepository.existsByBlogAndUser(blog, user)) {
+			FavouriteBlog favouriteBlog = new FavouriteBlog();
+			FavouriteBlogKey key = new FavouriteBlogKey(user.getUserId(), blog.getBlogId());
+			favouriteBlog.setFavouriteBlogKey(key);
+			favouriteBlog.setUser(user);
+			favouriteBlog.setBlog(blog);
+			blog.setFavouriteCount(blog.getFavouriteCount() + 1);
+			blog.setBlogScore(calculateBlogScore(blog));
+			blogRepository.save(blog);
+			favouriteBlogRepository.save(favouriteBlog);
+			recalculateBlogScore(blog);
+			return favouriteBlog;
+		}
+		return null;
+
+	}
+
+	private void recalculateBlogScore(Blog favouriteBlog) {
+		Optional<Blog> mostFavouriteBlogOpt = blogRepository.findTopByOrderByFavouriteCountDesc();
+		if (mostFavouriteBlogOpt.isPresent()) {
+			Blog mostFavouriteBlog = mostFavouriteBlogOpt.get();
+			if (favouriteBlog.getBlogId() == mostFavouriteBlog.getBlogId()) {
+				List<Blog> blogs = blogRepository.findAll();
+				blogs.forEach(blog -> {
+					blog.setBlogScore(calculateBlogScore(blog));
+					blogRepository.save(blog);
+				});
+			}
+		}
 
 	}
 

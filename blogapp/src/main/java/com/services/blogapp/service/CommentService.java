@@ -3,6 +3,7 @@ package com.services.blogapp.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,10 +59,27 @@ public class CommentService {
 		comment.setUser(user);
 		blog.setCommentCount(blog.getCommentCount() + 1);
 		blog.setBlogScore(blogService.calculateBlogScore(blog));
-
 		blogRepository.save(blog);
-		return commentRepository.save(comment);
+		commentRepository.save(comment);
+		recalculateBlogScore(blog);
 
+		return comment;
+
+	}
+
+	private void recalculateBlogScore(Blog commentedBlog) {
+		Optional<Blog> mostCommentBlogOpt = blogRepository.findTopByOrderByCommentCountDesc();
+		if (mostCommentBlogOpt.isPresent()) {
+			Blog mostCommentedBlog = mostCommentBlogOpt.get();
+			if (commentedBlog.getBlogId() == mostCommentedBlog.getBlogId()) {
+				List<Blog> blogs = blogRepository.findAll();
+				blogs.forEach(blog -> {
+
+					blog.setBlogScore(blogService.calculateBlogScore(blog));
+					blogRepository.save(blog);
+				});
+			}
+		}
 	}
 
 	public void deleteByBlog(Blog blog) {
