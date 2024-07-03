@@ -1,19 +1,18 @@
 package com.services.blogapp.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.services.blogapp.dto.BlogCommentDto;
 import com.services.blogapp.dto.CommentDto;
 import com.services.blogapp.exception.NotFoundException;
 import com.services.blogapp.model.Blog;
 import com.services.blogapp.model.Comment;
 import com.services.blogapp.model.User;
+import com.services.blogapp.projection.CommentDtoProjection;
 import com.services.blogapp.repository.BlogRepository;
 import com.services.blogapp.repository.CommentRepository;
 import com.services.blogapp.utils.SecurityUtils;
@@ -87,15 +86,9 @@ public class CommentService {
 
 	}
 
-	// prebaciti na database projekciju radi performansi izvršenja servisa
-	public List<BlogCommentDto> findByBlogId(int blogId) throws NotFoundException {
+	public List<CommentDtoProjection> findByBlogId(int blogId) throws NotFoundException {
 		if (blogRepository.existsById(blogId)) {
-			List<Comment> comments = commentRepository.findByBlog_blogId(blogId);
-			List<BlogCommentDto> blogCommentDtos = new ArrayList<BlogCommentDto>();
-			comments.forEach(comment -> {
-				blogCommentDtos.add(new BlogCommentDto(blogId, comment.getCommentContent()));
-			});
-			return blogCommentDtos;
+			return commentRepository.findByBlogId(blogId);
 		}
 		throw new NotFoundException("Nije pronađen blog sa id-em:" + blogId);
 	}
