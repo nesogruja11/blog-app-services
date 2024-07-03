@@ -12,6 +12,7 @@ import com.services.blogapp.model.Blog;
 
 @Repository
 public interface BlogRepository extends JpaRepository<Blog, Integer> {
+
 	Optional<Blog> findTopByOrderByFavouriteCountDesc();
 
 	Optional<Blog> findTopByOrderByCommentCountDesc();
@@ -20,4 +21,5 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
 	float findAverageApprovedBlogScore(@Param("userId") int userId);
 
 	List<Blog> findTop5ByOrderByBlogScoreDesc();
+
 }
