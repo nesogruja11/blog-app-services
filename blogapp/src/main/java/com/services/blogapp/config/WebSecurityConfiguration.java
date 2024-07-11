@@ -30,7 +30,7 @@ public class WebSecurityConfiguration {
 	UserDetailsServiceImpl userDetailsService;
 
 	@Autowired
-	private SimpleAuthenticationEntryPoint unauthorizedHandler;
+	SimpleAuthenticationEntryPoint unauthorizedHandler;
 
 	@Autowired
 	CustomAccessDeniedHandler customAcessDeniedHandler;
@@ -88,10 +88,11 @@ public class WebSecurityConfiguration {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-		 http .cors() .and() .csrf().disable()
+		http.csrf(csrf -> csrf.disable())
+		.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler).accessDeniedHandler(customAcessDeniedHandler))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth.requestMatchers(PERMIT_ALL_URLS).permitAll()
+					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+					.authorizeHttpRequests(auth -> auth.requestMatchers(PERMIT_ALL_URLS).permitAll()
 				.requestMatchers(ADMIN_URLS).hasRole("ADMIN")
 				.requestMatchers(USER_URLS).hasAnyRole("USER", "ADMIN")
 				.anyRequest().authenticated());
