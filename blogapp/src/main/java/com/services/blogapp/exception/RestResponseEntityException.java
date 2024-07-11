@@ -28,6 +28,11 @@ public class RestResponseEntityException {
 		return errorBuilder(ex.getMessage(), request, HttpStatus.UNAUTHORIZED);
 	}
 
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorMessage> exceptionExceptionHandler(Exception ex, WebRequest request) {
+		return errorBuilder(ex.getMessage(), request, HttpStatus.BAD_REQUEST);
+	}
+
 	@ExceptionHandler(DataAccessException.class)
 	public ResponseEntity<ErrorMessage> handleDataAccessException(DataAccessException ex, WebRequest request) {
 

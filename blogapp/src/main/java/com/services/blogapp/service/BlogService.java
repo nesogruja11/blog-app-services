@@ -2,6 +2,7 @@ package com.services.blogapp.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,10 +70,15 @@ public class BlogService {
 	}
 
 	@Transactional
-	public Blog save(BlogDto blogDto) throws NotFoundException {
+	public Blog save(BlogDto blogDto) throws Exception {
 		String userName = SecurityUtils.getUsername();
 		User user = userService.findUserByUsername(userName).get();
 		Blog blog = new Blog();
+
+		if ((Objects.isNull(blogDto.getBlogTitle()) || blogDto.getBlogTitle().isBlank())
+				|| (Objects.isNull(blogDto.getCoverImageUrl()) || blogDto.getCoverImageUrl().isBlank())
+				|| (Objects.isNull(blogDto.getBlogContent()) || blogDto.getBlogContent().isBlank()))
+			throw new Exception("Provjerite parametre bloga");
 		blog.setBlogTitle(blogDto.getBlogTitle());
 		blog.setTravelDate(blogDto.getTravelDate());
 		blog.setCoverImageUrl(blogDto.getCoverImageUrl());

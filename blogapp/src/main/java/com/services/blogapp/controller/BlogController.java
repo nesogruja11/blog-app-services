@@ -35,7 +35,7 @@ public class BlogController {
 	}
 
 	@PostMapping("/save")
-	public Blog save(@RequestBody BlogDto blogDto) throws NotFoundException {
+	public Blog save(@RequestBody BlogDto blogDto) throws Exception {
 		return blogService.save(blogDto);
 	}
 
