@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.naming.AuthenticationException;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,6 +26,12 @@ public class RestResponseEntityException {
 	@ExceptionHandler(AuthenticationException.class)
 	public ResponseEntity<ErrorMessage> notAuthorizedExceptionHandler(Unauthorized ex, WebRequest request) {
 		return errorBuilder(ex.getMessage(), request, HttpStatus.UNAUTHORIZED);
+	}
+
+	@ExceptionHandler(DataAccessException.class)
+	public ResponseEntity<ErrorMessage> handleDataAccessException(DataAccessException ex, WebRequest request) {
+
+		return errorBuilder(ex.getMessage(), request, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(NotFoundException.class)
