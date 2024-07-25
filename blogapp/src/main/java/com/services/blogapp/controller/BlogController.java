@@ -3,6 +3,8 @@ package com.services.blogapp.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.services.blogapp.dto.BlogDto;
 import com.services.blogapp.dto.BlogUpdateDto;
+import com.services.blogapp.dto.PictureDto;
 import com.services.blogapp.exception.NotFoundException;
 import com.services.blogapp.model.Blog;
 import com.services.blogapp.model.FavouriteBlog;
 import com.services.blogapp.service.BlogService;
 import com.services.blogapp.service.CommentService;
+import com.services.blogapp.service.FavouriteBlogService;
+import com.services.blogapp.service.PictureService;
 
 @RestController
 @RequestMapping("/blog")
@@ -27,16 +32,33 @@ public class BlogController {
 	BlogService blogService;
 	@Autowired
 	CommentService commentService;
+	@Autowired
+	FavouriteBlogService favouriteBlogService;
+	@Autowired
+	PictureService pictureService;
 
 	@GetMapping("/findById")
-	public Blog findById(@RequestParam int id) throws NotFoundException {
-		return blogService.findById(id);
+	public Blog findById(@RequestParam int blogId) throws NotFoundException {
+		return blogService.findById(blogId);
 
 	}
 
 	@PostMapping("/save")
 	public Blog save(@RequestBody BlogDto blogDto) throws Exception {
 		return blogService.save(blogDto);
+	}
+
+	@PostMapping("/savePictures")
+	public ResponseEntity<String> savePictures(@RequestBody PictureDto pictureDto) {
+		try {
+			pictureService.savePictures(pictureDto);
+			return ResponseEntity.ok("Slike su uspešno sačuvane.");
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Došlo je do greške prilikom čuvanja slika.");
+		}
 	}
 
 	@GetMapping("/findAll")
@@ -55,12 +77,12 @@ public class BlogController {
 		blogService.deleteBlog(blogId);
 	}
 
-	@PostMapping("/approve")
+	@GetMapping("/approve")
 	public Blog approveBlog(@RequestParam int blogId) throws NotFoundException {
 		return blogService.approveBlog(blogId);
 	}
 
-	@PostMapping("/saveFavouriteBlog")
+	@GetMapping("/saveFavouriteBlog")
 	public FavouriteBlog saveFavouriteBlog(@RequestParam int blogId) throws NotFoundException {
 		return blogService.saveFavouriteBlog(blogId);
 	}
@@ -73,6 +95,16 @@ public class BlogController {
 	@GetMapping("/findTop5")
 	public List<Blog> findTop5() {
 		return blogService.findTop5ByOrderByBlogScoreDesc();
+	}
+
+	@GetMapping("/allUnapprovedBlogs")
+	public List<Blog> findAllUnapprovedBlogs() {
+		return blogService.getUnapprovedBlogs();
+	}
+
+	@GetMapping("/allFavouritesBlogs")
+	public List<FavouriteBlog> getAllFavouriteBlogs() {
+		return favouriteBlogService.findAllFavouritesBlogs();
 	}
 
 }

@@ -22,4 +22,6 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
 
 	List<Blog> findTop5ByOrderByBlogScoreDesc();
 
+	List<Blog> findByApprovedFalse();
+
 }

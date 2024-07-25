@@ -1,5 +1,7 @@
 package com.services.blogapp.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +15,7 @@ public interface FavouriteBlogRepository extends JpaRepository<FavouriteBlog, Fa
 	int deleteByUserAndBlog(User user, Blog blog);
 
 	boolean existsByBlogAndUser(Blog blog, User user);
+
+	List<FavouriteBlog> findAllByUser(User user);
 
 }
