@@ -13,6 +13,7 @@ import com.services.blogapp.projection.CommentDtoProjection;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
+
 	void deleteByBlog(Blog blog);
 
 	List<Comment> findByBlog(Blog blog);

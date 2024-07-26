@@ -40,7 +40,7 @@ public class WebSecurityConfiguration {
 			"/blogStatus/update", "/blog/approve" };
 	private static final String[] USER_URLS = { "/blog/save", "/blog/update", "/country/findbyId", "/country/findAll",
 			"/comment/save", "/blog/saveFavouriteBlog", "/blog/deleteFavouriteBlog", "/comment/deleteById",
-			"/blog/deleteById", "/blog/allUnapprovedBlogs", "/blog/savePictures" };
+			"/blog/deleteById", "/blog/allUnapprovedBlogs", "/blog/savePictures", "/picture/findByBlog" };
 	private static final String[] PERMIT_ALL_URLS = { "/user/login", "/user/save", "/blog/findById", "/blog/findAll",
 			"/comment/findByBlog", "/comment/findAll", "/comment/findById", "/blog/approve" };
 
