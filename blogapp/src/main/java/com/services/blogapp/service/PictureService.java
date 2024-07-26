@@ -9,6 +9,7 @@ import com.services.blogapp.dto.PictureDto;
 import com.services.blogapp.exception.NotFoundException;
 import com.services.blogapp.model.Blog;
 import com.services.blogapp.model.Picture;
+import com.services.blogapp.projection.PictureDtoProjection;
 import com.services.blogapp.repository.BlogRepository;
 import com.services.blogapp.repository.PictureRepository;
 
@@ -38,6 +39,13 @@ public class PictureService {
 			System.out.println("Došlo je do greške prilikom čuvanja slika(blogId:" + blog.getBlogId() + ")");
 		}
 
+	}
+
+	public List<PictureDtoProjection> findByBlogId(int blogId) throws NotFoundException {
+		if (blogRepository.existsById(blogId)) {
+			return pictureRepository.findByBlogId(blogId);
+		}
+		throw new NotFoundException("Nije pronađen blog sa id-em:" + blogId);
 	}
 
 	public List<Picture> findAll() {

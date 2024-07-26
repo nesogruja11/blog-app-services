@@ -3,8 +3,6 @@ package com.services.blogapp.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,14 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.services.blogapp.dto.BlogDto;
 import com.services.blogapp.dto.BlogUpdateDto;
-import com.services.blogapp.dto.PictureDto;
 import com.services.blogapp.exception.NotFoundException;
 import com.services.blogapp.model.Blog;
 import com.services.blogapp.model.FavouriteBlog;
 import com.services.blogapp.service.BlogService;
 import com.services.blogapp.service.CommentService;
 import com.services.blogapp.service.FavouriteBlogService;
-import com.services.blogapp.service.PictureService;
 
 @RestController
 @RequestMapping("/blog")
@@ -34,8 +30,6 @@ public class BlogController {
 	CommentService commentService;
 	@Autowired
 	FavouriteBlogService favouriteBlogService;
-	@Autowired
-	PictureService pictureService;
 
 	@GetMapping("/findById")
 	public Blog findById(@RequestParam int blogId) throws NotFoundException {
@@ -46,19 +40,6 @@ public class BlogController {
 	@PostMapping("/save")
 	public Blog save(@RequestBody BlogDto blogDto) throws Exception {
 		return blogService.save(blogDto);
-	}
-
-	@PostMapping("/savePictures")
-	public ResponseEntity<String> savePictures(@RequestBody PictureDto pictureDto) {
-		try {
-			pictureService.savePictures(pictureDto);
-			return ResponseEntity.ok("Slike su uspešno sačuvane.");
-		} catch (NotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Došlo je do greške prilikom čuvanja slika.");
-		}
 	}
 
 	@GetMapping("/findAll")
