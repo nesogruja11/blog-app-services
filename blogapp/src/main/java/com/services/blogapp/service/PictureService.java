@@ -56,4 +56,20 @@ public class PictureService {
 		pictureRepository.deleteByBlog(blog);
 	}
 
+	public Picture findById(int id) throws NotFoundException {
+		return pictureRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Nije pronađena slika sa id-em:" + id));
+	}
+
+	public void delete(int pictureId) throws NotFoundException {
+		if (pictureRepository.existsById(pictureId)) {
+			Picture picture = findById(pictureId);
+			Blog blog = picture.getBlog();
+			blogRepository.save(blog);
+			pictureRepository.deleteById(pictureId);
+		} else {
+			throw new NotFoundException("Nije pronađena slika sa id-em:" + pictureId);
+		}
+	}
+
 }
