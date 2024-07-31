@@ -42,7 +42,8 @@ public class WebSecurityConfiguration {
 			"/comment/save", "/blog/saveFavouriteBlog", "/blog/deleteFavouriteBlog", "/comment/deleteById",
 			"/blog/deleteById", "/blog/allUnapprovedBlogs", "/picture/findByBlog" };
 	private static final String[] PERMIT_ALL_URLS = { "/user/login", "/user/save", "/blog/findById", "/blog/findAll",
-			"/comment/findByBlog", "/comment/findAll", "/comment/findById", "/blog/approve", "/picture/savePictures" };
+			"/comment/findByBlog", "/comment/findAll", "/comment/findById", "/blog/approve", "/picture/savePictures",
+			"/user/findAll", "/user/role" };
 
 	@Bean
 	public AuthTokenFilter authenticationJwtTokenFilter() {

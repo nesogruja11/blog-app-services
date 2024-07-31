@@ -132,4 +132,10 @@ public class UserService {
 		return userRepository.findTop5ByOrderByBloggerScoreDesc();
 	}
 
+	public List<UserRole> getRolesByUserId(int userId) {
+		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Korisnik nije pronađen"));
+
+		return userRoleRepository.findByUser(user);
+	}
+
 }

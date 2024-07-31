@@ -19,6 +19,7 @@ import com.services.blogapp.dto.UserDto;
 import com.services.blogapp.exception.NotFoundException;
 import com.services.blogapp.exception.RegistrationException;
 import com.services.blogapp.model.User;
+import com.services.blogapp.model.UserRole;
 import com.services.blogapp.service.UserService;
 
 @RestController
@@ -61,6 +62,12 @@ public class UserController {
 	@GetMapping("/findTop5")
 	public List<User> findTop5() {
 		return userService.findTop5ByOrderByBloggerScoreDesc();
+	}
+
+	@GetMapping("/role")
+	public ResponseEntity<List<UserRole>> getUserRoles(@RequestParam int userId) {
+		List<UserRole> roles = userService.getRolesByUserId(userId);
+		return ResponseEntity.ok(roles);
 	}
 
 }
