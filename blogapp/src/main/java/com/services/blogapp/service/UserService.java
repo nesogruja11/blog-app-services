@@ -3,6 +3,7 @@ package com.services.blogapp.service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import com.services.blogapp.config.JwtUtils;
 import com.services.blogapp.dto.JwtResponse;
 import com.services.blogapp.dto.LoginDto;
 import com.services.blogapp.dto.RegistrationDto;
+import com.services.blogapp.dto.UserDetailsDto;
 import com.services.blogapp.dto.UserDto;
 import com.services.blogapp.exception.NotFoundException;
 import com.services.blogapp.exception.RegistrationException;
@@ -51,6 +53,9 @@ public class UserService {
 
 	@Autowired
 	UserRoleRepository userRoleRepository;
+
+	@Autowired
+	UserRoleService userRoleService;
 
 	private final String ROLE_USER = "ROLE_USER";
 
@@ -87,8 +92,14 @@ public class UserService {
 				.orElseThrow(() -> new NotFoundException("Nije pronađen user sa id-em:" + id));
 	}
 
-	public List<User> findAll() throws NotFoundException {
+	public List<User> findAll() {
 		return userRepository.findAll();
+	}
+
+	public List<UserDetailsDto> findAllUserDetails() {
+		List<User> users = findAll();
+		return users.stream().map(x -> buildUserDetailsDtoFromUser(x)).collect(Collectors.toList());
+
 	}
 
 	public User update(UserDto userDto) throws NotFoundException {
@@ -136,6 +147,23 @@ public class UserService {
 		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Korisnik nije pronađen"));
 
 		return userRoleRepository.findByUser(user);
+	}
+
+	private UserDetailsDto buildUserDetailsDtoFromUser(User user) {
+		UserDetailsDto userDetailsDto = new UserDetailsDto();
+		userDetailsDto.setFirstName(user.getFirstName());
+		userDetailsDto.setLastName(user.getLastName());
+		userDetailsDto.setUsername(user.getUsername());
+		userDetailsDto.setEmail(user.getEmail());
+		userDetailsDto.setActive(user.isActive());
+		userDetailsDto.setTotalCreatedBlogs(user.getTotalCreatedBlogs());
+		userDetailsDto.setBlogApproveCount(user.getBlogApproveCount());
+		userDetailsDto.setUserId(user.getUserId());
+		userDetailsDto.setBloggerScore(user.getBloggerScore());
+		List<String> roles = userRoleService.findByUser(user).stream().map(x -> x.getRole().getPreviewName())
+				.collect(Collectors.toList());
+		userDetailsDto.setRoleNames(roles);
+		return userDetailsDto;
 	}
 
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.services.blogapp.dto.LoginDto;
 import com.services.blogapp.dto.RegistrationDto;
+import com.services.blogapp.dto.UserDetailsDto;
 import com.services.blogapp.dto.UserDto;
 import com.services.blogapp.exception.NotFoundException;
 import com.services.blogapp.exception.RegistrationException;
@@ -50,8 +51,8 @@ public class UserController {
 	}
 
 	@GetMapping("/findAll")
-	private List<User> findAll() throws NotFoundException {
-		return userService.findAll();
+	private List<UserDetailsDto> findAll() {
+		return userService.findAllUserDetails();
 	}
 
 	@GetMapping("/findById")
