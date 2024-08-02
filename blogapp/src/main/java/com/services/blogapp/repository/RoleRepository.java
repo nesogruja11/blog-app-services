@@ -9,6 +9,9 @@ import com.services.blogapp.model.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Integer> {
+
 	Optional<Role> findByName(String name);
+
+	Optional<Role> findByPreviewName(String previewName);
 
 }

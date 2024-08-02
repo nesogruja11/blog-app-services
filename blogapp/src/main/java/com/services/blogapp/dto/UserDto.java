@@ -18,6 +18,8 @@ public class UserDto {
 	private String email;
 	private String firstName;
 	private String lastName;
-	private List<Integer> roleIds;
+	private boolean active;
+	// private List<Integer> roleIds;
+	private List<String> roleNames;
 
 }

@@ -30,6 +30,8 @@ import com.services.blogapp.repository.RoleRepository;
 import com.services.blogapp.repository.UserRepository;
 import com.services.blogapp.repository.UserRoleRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService {
 
@@ -83,7 +85,7 @@ public class UserService {
 		user.setLastName(userDto.getLastName());
 		user.setPassword(encoder.encode(userDto.getPassword()));
 		user.setUsername(userDto.getUsername());
-
+		user.setActive(userDto.isActive());
 		return user;
 	}
 
@@ -109,6 +111,7 @@ public class UserService {
 		user.setLastName(userDto.getLastName());
 		user.setPassword(encoder.encode(userDto.getPassword()));
 		user.setUsername(userDto.getUsername());
+		user.setActive(user.isActive());
 		return userRepository.save(user);
 	}
 
@@ -120,17 +123,28 @@ public class UserService {
 		}
 	}
 
+	@Transactional
 	public RegistrationDto save(UserDto userDto) throws RegistrationException, NotFoundException {
 		if (!userRepository.existsByEmail(userDto.getEmail())
 				&& !userRepository.existsByUsername(userDto.getUsername())) {
 			User user = userRepository.save(buildUserFromDto(userDto));
-			Role role = roleService.findByName(ROLE_USER);
-			UserRoleKey key = new UserRoleKey(user.getUserId(), role.getRoleId());
-			userRoleRepository.save(new UserRole(key, user, role));
+			userDto.getRoleNames().forEach(roleName -> {
+				Role role = null;
+				try {
+//					System.out.println(roleName);
+					role = roleService.findByPreviewName(roleName);
+					System.out.println(roleService.findByPreviewName(roleName));
+				} catch (NotFoundException e) {
+					e.printStackTrace();
+				}
+
+				UserRoleKey key = new UserRoleKey(user.getUserId(), role.getRoleId());
+				userRoleRepository.save(new UserRole(key, user, role));
+			});
 
 			if (Objects.nonNull(userRepository.save(user))) {
 				return new RegistrationDto(user.getUserId(), user.getUsername(), user.getEmail(), user.getFirstName(),
-						user.getLastName());
+						user.getLastName(), user.isActive());
 			} else {
 				throw new RegistrationException("Greška prilikom registracije korisnika!");
 			}

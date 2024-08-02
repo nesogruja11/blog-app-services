@@ -15,5 +15,6 @@ public class RegistrationDto {
 	private String email;
 	private String firstName;
 	private String lastName;
+	private boolean active;
 
 }

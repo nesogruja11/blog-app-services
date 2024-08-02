@@ -25,6 +25,11 @@ public class RoleService {
 				.orElseThrow(() -> new NotFoundException("Nije pronađena rola sa imenom:" + name));
 	}
 
+	public Role findByPreviewName(String previewName) throws NotFoundException {
+		return roleRepository.findByPreviewName(previewName)
+				.orElseThrow(() -> new NotFoundException("Nije pronađena rola sa imenom:" + previewName));
+	}
+
 	public Role save(RoleDto roleDto) throws NotFoundException {
 		Role role = new Role();
 		role.setName(roleDto.getName());
