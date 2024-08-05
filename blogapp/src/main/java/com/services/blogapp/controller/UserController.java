@@ -40,11 +40,6 @@ public class UserController {
 		return userService.save(userDto);
 	}
 
-	@PutMapping("/update")
-	public User update(@RequestBody UserDto userDto) throws NotFoundException {
-		return userService.update(userDto);
-	}
-
 	@DeleteMapping("/delete")
 	private void delete(@RequestBody User user) throws NotFoundException {
 		userService.delete(user);
@@ -69,6 +64,11 @@ public class UserController {
 	public ResponseEntity<List<UserRole>> getUserRoles(@RequestParam int userId) {
 		List<UserRole> roles = userService.getRolesByUserId(userId);
 		return ResponseEntity.ok(roles);
+	}
+
+	@PutMapping("/updateUser")
+	public RegistrationDto updateUser(@RequestBody UserDto userDto) throws NotFoundException, RegistrationException {
+		return userService.updateUser(userDto);
 	}
 
 }

@@ -59,8 +59,6 @@ public class UserService {
 	@Autowired
 	UserRoleService userRoleService;
 
-	private final String ROLE_USER = "ROLE_USER";
-
 	public ResponseEntity<?> login(LoginDto loginRequest) {
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -104,17 +102,6 @@ public class UserService {
 
 	}
 
-	public User update(UserDto userDto) throws NotFoundException {
-		User user = findById(userDto.getUserId());
-		user.setEmail(userDto.getEmail());
-		user.setFirstName(userDto.getFirstName());
-		user.setLastName(userDto.getLastName());
-		user.setPassword(encoder.encode(userDto.getPassword()));
-		user.setUsername(userDto.getUsername());
-		user.setActive(user.isActive());
-		return userRepository.save(user);
-	}
-
 	public void delete(User user) throws NotFoundException {
 		if (userRepository.existsById(user.getUserId())) {
 			userRepository.delete(user);
@@ -131,7 +118,6 @@ public class UserService {
 			userDto.getRoleNames().forEach(roleName -> {
 				Role role = null;
 				try {
-//					System.out.println(roleName);
 					role = roleService.findByPreviewName(roleName);
 					System.out.println(roleService.findByPreviewName(roleName));
 				} catch (NotFoundException e) {
@@ -151,6 +137,45 @@ public class UserService {
 		}
 		throw new RegistrationException("E-mail i username moraju biti jedinstveni");
 
+	}
+
+	@Transactional
+	public RegistrationDto updateUser(UserDto userDto) throws NotFoundException, RegistrationException {
+		User existingUser = userRepository.findById(userDto.getUserId())
+				.orElseThrow(() -> new NotFoundException("Korisnik nije pronađen"));
+
+		if (!Objects.equals(existingUser.getEmail(), userDto.getEmail())
+				&& userRepository.existsByEmail(userDto.getEmail())) {
+			throw new RegistrationException("E-mail je već u upotrebi");
+		}
+
+		if (!Objects.equals(existingUser.getUsername(), userDto.getUsername())
+				&& userRepository.existsByUsername(userDto.getUsername())) {
+			throw new RegistrationException("Username je već u upotrebi");
+		}
+
+		existingUser.setUsername(userDto.getUsername());
+		existingUser.setPassword(userDto.getPassword());
+		existingUser.setEmail(userDto.getEmail());
+		existingUser.setFirstName(userDto.getFirstName());
+		existingUser.setLastName(userDto.getLastName());
+		existingUser.setActive(userDto.isActive());
+
+		userRepository.save(existingUser);
+
+		userRoleRepository.deleteByUserId(existingUser.getUserId());
+		userDto.getRoleNames().forEach(roleName -> {
+			try {
+				Role role = roleService.findByPreviewName(roleName);
+				UserRoleKey key = new UserRoleKey(existingUser.getUserId(), role.getRoleId());
+				userRoleRepository.save(new UserRole(key, existingUser, role));
+			} catch (NotFoundException e) {
+				e.printStackTrace();
+			}
+		});
+
+		return new RegistrationDto(existingUser.getUserId(), existingUser.getUsername(), existingUser.getEmail(),
+				existingUser.getFirstName(), existingUser.getLastName(), existingUser.isActive());
 	}
 
 	public List<User> findTop5ByOrderByBloggerScoreDesc() {
