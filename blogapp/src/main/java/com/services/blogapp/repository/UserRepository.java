@@ -19,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
 	List<User> findTop5ByOrderByBloggerScoreDesc();
 
+	Optional<User> findById(int id);
+
 }

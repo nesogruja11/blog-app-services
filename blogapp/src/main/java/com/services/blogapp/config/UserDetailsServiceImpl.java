@@ -26,15 +26,34 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	UserRoleRepository userRoleRepository;
 
+//	@Override
+//	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//
+//		Optional<User> user = userRepository.findByUsername(username);
+//		user.orElseThrow(() -> new UsernameNotFoundException("Nije pronađen korisnik sa username-om:" + username));
+//
+//		List<UserRole> userRoles = userRoleRepository.findByUser(user.get());
+//
+//		AuthUserDetails auth = new AuthUserDetails(user.get(), userRoles);
+//		return auth;
+//	}
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Optional<User> optionalUser = userRepository.findByUsername(username);
 
-		Optional<User> user = userRepository.findByUsername(username);
-		user.orElseThrow(() -> new UsernameNotFoundException("Nije pronađen korisnik sa username-om:" + username));
-		List<UserRole> userRoles = userRoleRepository.findByUser(user.get());
+		if (!optionalUser.isPresent()) {
+			throw new UsernameNotFoundException("Nije pronađen korisnik sa korisničkim imenom: " + username);
+		}
 
-		AuthUserDetails auth = new AuthUserDetails(user.get(), userRoles);
-		return auth;
+		User user = optionalUser.get();
+
+		if (!user.isActive()) {
+			throw new UsernameNotFoundException("Korisnik je neaktivan.");
+		}
+
+		List<UserRole> userRoles = userRoleRepository.findByUser(user);
+
+		return new AuthUserDetails(user, userRoles);
 	}
-
 }

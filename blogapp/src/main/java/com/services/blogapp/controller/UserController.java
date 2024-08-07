@@ -40,9 +40,14 @@ public class UserController {
 		return userService.save(userDto);
 	}
 
+//	@DeleteMapping("/delete")
+//	private void delete(@RequestBody User user) throws NotFoundException {
+//		userService.delete(user);
+//	}
+
 	@DeleteMapping("/delete")
-	private void delete(@RequestBody User user) throws NotFoundException {
-		userService.delete(user);
+	public void delete(@RequestParam int userId) {
+		userService.deleteUser(userId);
 	}
 
 	@GetMapping("/findAll")
@@ -69,6 +74,11 @@ public class UserController {
 	@PutMapping("/updateUser")
 	public RegistrationDto updateUser(@RequestBody UserDto userDto) throws NotFoundException, RegistrationException {
 		return userService.updateUser(userDto);
+	}
+
+	@DeleteMapping("/deleteUser")
+	public void deleteUser(@RequestParam int id) {
+		userService.deleteUser(id);
 	}
 
 }
