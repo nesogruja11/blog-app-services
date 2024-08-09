@@ -40,6 +40,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
 		Optional<User> optionalUser = userRepository.findByUsername(username);
 
 		if (!optionalUser.isPresent()) {
@@ -55,5 +56,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		List<UserRole> userRoles = userRoleRepository.findByUser(user);
 
 		return new AuthUserDetails(user, userRoles);
+
 	}
 }

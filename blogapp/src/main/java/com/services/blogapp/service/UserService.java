@@ -6,11 +6,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +65,11 @@ public class UserService {
 
 	public ResponseEntity<?> login(LoginDto loginRequest) {
 
+		Optional<User> optionalUser = userRepository.findByUsername(loginRequest.getUsername());
+		if (optionalUser.isPresent() && !optionalUser.get().isActive()) {
+			throw new UsernameNotFoundException("Korisnik je neaktivan.");
+		}
+
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -92,8 +101,14 @@ public class UserService {
 				.orElseThrow(() -> new NotFoundException("Nije pronađen user sa id-em:" + id));
 	}
 
+//	public List<User> findAll() {
+//		return userRepository.findAll();
+//	}
+
 	public List<User> findAll() {
-		return userRepository.findAll();
+
+		Pageable sortedByUserIdDesc = PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Order.desc("userId")));
+		return userRepository.findAll(sortedByUserIdDesc).getContent();
 	}
 
 	public List<UserDetailsDto> findAllUserDetails() {
