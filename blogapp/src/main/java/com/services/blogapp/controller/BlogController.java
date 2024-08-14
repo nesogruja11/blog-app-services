@@ -88,4 +88,9 @@ public class BlogController {
 		return favouriteBlogService.findAllFavouritesBlogs();
 	}
 
+	@GetMapping("/findAllApprovedBlogs")
+	public List<Blog> findAllApprovedBlogs() {
+		return blogService.getApprovedBlogs();
+	}
+
 }

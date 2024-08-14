@@ -24,4 +24,6 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
 
 	List<Blog> findByApprovedFalse();
 
+	List<Blog> findByApprovedTrue();
+
 }

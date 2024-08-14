@@ -82,6 +82,10 @@ public class BlogService {
 		return blogRepository.findByApprovedFalse();
 	}
 
+	public List<Blog> getApprovedBlogs() {
+		return blogRepository.findByApprovedTrue();
+	}
+
 	@Transactional
 	public Blog save(BlogDto blogDto) throws Exception {
 		String userName = SecurityUtils.getUsername();
