@@ -37,13 +37,13 @@ public class WebSecurityConfiguration {
 
 	private static final String[] ADMIN_URLS = { "/role/**", "/blogStatus/**", "/country/save", "/country/update",
 			"/country/delete", "/user/delete", "/user/update", "/user/findAll", "/blogStatus/save",
-			"/blogStatus/update", "/blog/approve" };
+			"/blogStatus/update", "/blog/approve", "/blog/allUnapprovedBlogs", "/user/findAll", "/user/role",
+			"/user/update", "/user/save", };
 	private static final String[] USER_URLS = { "/blog/save", "/blog/update", "/country/findbyId", "/country/findAll",
 			"/comment/save", "/blog/saveFavouriteBlog", "/blog/deleteFavouriteBlog", "/comment/deleteById",
-			"/blog/deleteById", "/blog/allUnapprovedBlogs", "/picture/findByBlog" };
-	private static final String[] PERMIT_ALL_URLS = { "/user/login", "/user/save", "/blog/findById", "/blog/findAll",
-			"/comment/findByBlog", "/comment/findAll", "/comment/findById", "/blog/approve", "/picture/savePictures",
-			"/user/findAll", "/user/role", "/role/findAll", "user/update" };
+			"/blog/deleteById", "/picture/findByBlog", "/picture/savePictures", };
+	private static final String[] PERMIT_ALL_URLS = { "/user/login", "/blog/findById", "/blog/findAll",
+			"/comment/findByBlog", "/comment/findAll", "/comment/findById" };
 
 	@Bean
 	public AuthTokenFilter authenticationJwtTokenFilter() {

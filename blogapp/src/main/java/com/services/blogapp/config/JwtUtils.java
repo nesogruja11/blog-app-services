@@ -2,6 +2,7 @@ package com.services.blogapp.config;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,10 @@ public class JwtUtils {
 
 		return Jwts.builder().setSubject((userPrincipal.getUsername())).setIssuedAt(new Date(jwtExpirationMs))
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+				.claim("role",
+						userPrincipal.getAuthorities().stream().map(authority -> authority.getAuthority())
+								.collect(Collectors.toList()))
+
 				.signWith(key(), SignatureAlgorithm.HS256).compact();
 	}
 
