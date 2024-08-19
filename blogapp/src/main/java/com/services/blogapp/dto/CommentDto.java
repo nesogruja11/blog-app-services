@@ -12,5 +12,6 @@ import lombok.Setter;
 public class CommentDto {
 	private int blogId;
 	private String commentContent;
+	private String userName;
 
 }

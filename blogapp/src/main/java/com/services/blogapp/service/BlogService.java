@@ -181,6 +181,7 @@ public class BlogService {
 		String userName = SecurityUtils.getUsername();
 		User user = userService.findUserByUsername(userName).get();
 		Blog blog = findById(blogId);
+		blog.setFavourite(true);
 		if (!favouriteBlogRepository.existsByBlogAndUser(blog, user)) {
 			FavouriteBlog favouriteBlog = new FavouriteBlog();
 			FavouriteBlogKey key = new FavouriteBlogKey(user.getUserId(), blog.getBlogId());
@@ -216,6 +217,7 @@ public class BlogService {
 	@Transactional
 	public boolean deleteFavouriteBlog(int blogId) throws NotFoundException {
 		Blog blog = findById(blogId);
+		blog.setFavourite(false);
 		String userName = SecurityUtils.getUsername();
 		User user = userService.findUserByUsername(userName).get();
 		if (favouriteBlogRepository.deleteByUserAndBlog(user, blog) > 0) {

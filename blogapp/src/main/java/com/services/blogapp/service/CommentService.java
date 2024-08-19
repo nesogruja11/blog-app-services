@@ -45,11 +45,33 @@ public class CommentService {
 		throw new NotFoundException("Nije pronađen blog sa id-em:" + blog.getBlogId());
 	}
 
+//	public Comment saveComment(CommentDto commentDto) throws NotFoundException {
+//		String userName = SecurityUtils.getUsername();
+//		User user = userService.findUserByUsername(userName).get();
+//		Blog blog = blogRepository.findById(commentDto.getBlogId())
+//				.orElseThrow(() -> new NotFoundException("Nije pronađen blog(blogId:" + commentDto.getBlogId()));
+//
+//		Comment comment = new Comment();
+//		comment.setCommentContent(commentDto.getCommentContent());
+//		comment.setCreatedAt(LocalDateTime.now());
+//		comment.setBlog(blog);
+//		comment.setUser(user);
+//		blog.setCommentCount(blog.getCommentCount() + 1);
+//		blog.setBlogScore(blogService.calculateBlogScore(blog));
+//		blogRepository.save(blog);
+//		commentRepository.save(comment);
+//		recalculateBlogScore(blog);
+//
+//		return comment;
+//
+//	}
+
 	public Comment saveComment(CommentDto commentDto) throws NotFoundException {
 		String userName = SecurityUtils.getUsername();
-		User user = userService.findUserByUsername(userName).get();
-		Blog blog = blogRepository.findById(commentDto.getBlogId())
-				.orElseThrow(() -> new NotFoundException("Nije pronađen blog(blogId:" + commentDto.getBlogId()));
+		User user = userService.findUserByUsername(userName)
+				.orElseThrow(() -> new NotFoundException("Nema korisnika sa imenom: " + userName));
+		Blog blog = blogRepository.findById(commentDto.getBlogId()).orElseThrow(
+				() -> new NotFoundException("Nije pronađen blog (blogId: " + commentDto.getBlogId() + ")"));
 
 		Comment comment = new Comment();
 		comment.setCommentContent(commentDto.getCommentContent());
@@ -63,7 +85,6 @@ public class CommentService {
 		recalculateBlogScore(blog);
 
 		return comment;
-
 	}
 
 	private void recalculateBlogScore(Blog commentedBlog) {

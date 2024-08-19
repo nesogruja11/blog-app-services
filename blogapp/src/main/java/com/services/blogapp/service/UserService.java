@@ -125,8 +125,10 @@ public class UserService {
 //		}
 //	}
 	@Transactional
-	public void delete(int userId) {
+	public void delete(int userId) throws NotFoundException {
 		if (userRepository.existsById(userId)) {
+			User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+			userRoleRepository.deleteByUser(user);
 			userRepository.deleteById(userId);
 		} else {
 			throw new RuntimeException("Korisnik sa ID " + userId + " ne postoji");

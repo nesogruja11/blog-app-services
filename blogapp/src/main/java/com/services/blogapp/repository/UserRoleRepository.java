@@ -20,6 +20,10 @@ public interface UserRoleRepository extends JpaRepository<UserRole, UserRoleKey>
 	List<UserRole> findByUser(User user);
 
 	@Modifying
+	@Query("DELETE FROM UserRole ur WHERE ur.user = :user")
+	void deleteByUser(@Param("user") User user);
+
+	@Modifying
 	@Transactional
 	@Query("DELETE FROM UserRole ur WHERE ur.user.userId = :userId")
 	void deleteByUserId(@Param("userId") int userId);

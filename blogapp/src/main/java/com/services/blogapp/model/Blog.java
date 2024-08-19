@@ -30,7 +30,7 @@ public class Blog {
 	@SequenceGenerator(name = "gen_blog_seq", allocationSize = 1, sequenceName = "gen_blog_seq")
 	private int blogId;
 
-	@Column(name = "blog_title", nullable = false)
+	@Column(name = "blog_title", nullable = false, unique = true)
 	private String blogTitle;
 
 	@Column(name = "travel_date", nullable = false)
@@ -47,6 +47,9 @@ public class Blog {
 
 	@Column(name = "approved", nullable = true)
 	private boolean approved;
+
+	@Column(name = "favourite", nullable = true)
+	private boolean favourite;
 
 	@Column(name = "favourite_count", nullable = true)
 	private int favouriteCount = 0;
