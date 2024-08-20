@@ -20,12 +20,12 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
 	List<Comment> findByBlog_blogId(int blogId);
 
-//	@Query(value = "SELECT comment_id, comment_content, user_id, created_at FROM comment WHERE blog_id=:blogId", nativeQuery = true)
+//	@Query(value = "SELECT comment_id, comment_content, user_id, created_at FROM comment WHERE blog_id=:blogId"
+//			+ "ORDER BY c.comment_id ASC", nativeQuery = true)
 //	List<CommentDtoProjection> findByBlogId(@Param("blogId") int blogId);
 
 	@Query(value = "SELECT c.comment_id, c.comment_content, c.user_id, c.created_at, u.username "
-			+ "FROM comment c JOIN application_user u ON c.user_id = u.user_id "
-			+ "WHERE c.blog_id = :blogId", nativeQuery = true)
+			+ "FROM comment c JOIN application_user u ON c.user_id = u.user_id " + "WHERE c.blog_id = :blogId "
+			+ "ORDER BY c.comment_id ASC", nativeQuery = true)
 	List<CommentDtoProjection> findByBlogId(@Param("blogId") int blogId);
-
 }
