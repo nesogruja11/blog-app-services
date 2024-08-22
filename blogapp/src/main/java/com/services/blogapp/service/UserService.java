@@ -117,21 +117,13 @@ public class UserService {
 
 	}
 
-//	public void delete(User user) throws NotFoundException {
-//		if (userRepository.existsById(user.getUserId())) {
-//			userRepository.delete(user);
-//		} else {
-//			throw new NotFoundException("Nije pronađen user sa id-em:" + user.getUserId());
-//		}
-//	}
 	@Transactional
-	public void delete(int userId) throws NotFoundException {
+	public void deleteUserById(int userId) {
 		if (userRepository.existsById(userId)) {
-			User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-			userRoleRepository.deleteByUser(user);
+			userRoleRepository.deleteByUserId(userId);
 			userRepository.deleteById(userId);
 		} else {
-			throw new RuntimeException("Korisnik sa ID " + userId + " ne postoji");
+			throw new RuntimeException("Nije pronađen korisnik sa id-em: " + userId);
 		}
 	}
 

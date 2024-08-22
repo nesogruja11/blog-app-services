@@ -40,14 +40,10 @@ public class UserController {
 		return userService.save(userDto);
 	}
 
-//	@DeleteMapping("/delete")
-//	private void delete(@RequestBody User user) throws NotFoundException {
-//		userService.delete(user);
-//	}
-
 	@DeleteMapping("/delete")
-	public void delete(@RequestParam int userId) {
-		userService.deleteUser(userId);
+	public ResponseEntity<Void> delete(@RequestParam int userId) {
+		userService.deleteUserById(userId);
+		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping("/findAll")
